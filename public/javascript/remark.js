@@ -138,7 +138,7 @@ Remark.prototype.printBookmark = function (bookmark) {
             '</a></td>' +
             '</tr>' +
             '<tr>' +
-            '<td colspan="4"></td>' +
+            '<td colspan="3"></td>' +
             '<td class="domain">' + bookmark['domain'] + '</td>' +
             '</tr>';
 

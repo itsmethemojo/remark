@@ -255,7 +255,7 @@ div.container{
     display: inline;
   }
 
-  div.container table.items tr td.date{
+  div.container table.items tr td.time{
     display: inline;
   }
 }
