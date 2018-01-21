@@ -8,7 +8,9 @@
 
     </head>
     <body>
-
+        <div class="add">
+          +
+        </div>
         <table>
             <tr>
                 <td>
@@ -17,41 +19,22 @@
             </tr>
             <tr>
                 <td>
-                    <input id="insert" class="insert" type="text" placeholder="add" value=""/>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                  <div class="icon remark"><div></div><div></div><div></div></div>
-                  <select id="remark">
-                      <option value="" ></option>
-                      <option value="=0" >= 0</option>
-                      <option value="1" >&gt; 1</option>
-                      <option value="2" >&gt; 2</option>
-                      <option value="3" >&gt; 3</option>
-                      <option value="4" >&gt; 4</option>
-                      <option value="5" >&gt; 5</option>
-                      <option value="6" >&gt; 6</option>
-                      <option value="7" >&gt; 7</option>
-                      <option value="8" >&gt; 8</option>
-                      <option value="9" >&gt; 9</option>
-                      <option value="10" >&gt; 10</option>
-                  </select>
-                  <div class="icon click"><div></div><div></div><div></div></div>
-                  <select id="click">
-                      <option value="" ></option>
-                      <option value="=0" >= 0</option>
-                      <option value="1" >&gt; 1</option>
-                      <option value="2" >&gt; 2</option>
-                      <option value="3" >&gt; 3</option>
-                      <option value="4" >&gt; 4</option>
-                      <option value="5" >&gt; 5</option>
-                      <option value="6" >&gt; 6</option>
-                      <option value="7" >&gt; 7</option>
-                      <option value="8" >&gt; 8</option>
-                      <option value="9" >&gt; 9</option>
-                      <option value="10" >&gt; 10</option>
-                  </select>
+                  <fieldset class="sortType">
+                    <input type="radio" id="radioSortTypeDate" name="sortType" value="date" checked>
+                    <label for="radioSortTypeDate">
+                        <div class="icon date"><div></div><div></div><div></div></div>
+                    </label>
+
+                    <input type="radio" id="radioSortTypeRemarks" name="sortType" value="remarks">
+                    <label for="radioSortTypeRemarks">
+                        <div class="icon remark"><div></div><div></div><div></div></div>
+                    </label>
+
+                    <input type="radio" id="radioSortTypeClicks" name="sortType" value="clicks">
+                    <label for="radioSortTypeClicks">
+                        <div class="icon click"><div></div><div></div><div></div></div>
+                    </label>
+                  </fieldset>
                 </td>
             </tr>
         </table>
@@ -63,8 +46,8 @@
         <script src="javascript/remark.js"></script>
 
         <script>
-            var test = new Remark({
-                apiUrl : "https://itsmethemojo.eu/api/bookmarks/"
+              var test = new Remark({
+                  apiUrl : "http://172.17.0.4:8080/"
             });
         </script>
     </body>

@@ -9,20 +9,24 @@ Remark.prototype.readConfig = function (config) {
     this.apiUrl = config.apiUrl;
     this.containerDivId = config.containerDivId ? "#" + config.containerDivId : '#bookmarks';
     this.filterInputId = config.filterInputId ? "#" + config.filterInputId : '#filter';
-    this.remarkSelectId = config.remarkSelectId ? "#" + config.remarkSelectId : '#remark';
-    this.clickSelectId = config.clickSelectId ? "#" + config.clickSelectId : '#click';
+    this.sortTypeSelectSelector = config.sortTypeSelectSelector ? config.sortTypeSelectSelector : 'input[type=radio][name=sortType]';
     this.firstEntriesCount = 30;
     this.wto = 0;
     this.filter = $(this.filterInputId).val();
     this.remarks = $(this.remarkSelectId).val();
     this.clicks = $(this.clickSelectId).val();
     this.bookmarks = localStorage.getObject("bookmarks") || new Array();
+    this.bookmarksRemarked = localStorage.getObject("bookmarksSortedByRemarks") || new Array();
+    this.bookmarksClicked = localStorage.getObject("bookmarksSortedByClicks") || new Array();
     this.maxCount = this.getUrlParameter("items");
+    //TODO read it from select
+    this.sortType = 'date';
 }
 
 Remark.prototype.listen = function () {
     var self = this;
 
+    // react on filterfield typing
     $(self.filterInputId).on('input', function (event) {
         self.filter = $(this).val().toLowerCase().trim();
 
@@ -32,47 +36,23 @@ Remark.prototype.listen = function () {
         }, 500);
     });
 
-    $(self.remarkSelectId).on('change', function (event) {
-        self.remarks = $(this).val();
-
-        clearTimeout(self.wto);
-        self.wto = setTimeout(function () {
-            self.printBookmarks();
-        }, 0);
+    // react on changing sort type
+    $(this.sortTypeSelectSelector).change(function() {
+      self.setSortType(this.value);
+      clearTimeout(self.wto);
+      self.wto = setTimeout(function () {
+          self.printBookmarks();
+      }, 500);
     });
+}
 
-    $(self.clickSelectId).on('change', function (event) {
-        self.clicks = $(this).val();
-
-        clearTimeout(self.wto);
-        self.wto = setTimeout(function () {
-            self.printBookmarks();
-        }, 0);
-    });
-    //TODO extract ids
-    $("#toggle-insert").click(function () {
-        $("#insert").toggleClass("toggled");
-        if ($(this).val() === "+") {
-            $(this).val("-");
-        } else {
-            $(this).val("+");
-        }
-    });
-
-    $("#insert").on("keydown", function (event) {
-        if (event.which == 13) {
-            // TODO whats this
-            var postUrl = self.apiUrl + "remark/?url=" + $(this).val();
-            var $thisObject = $(this);
-            $.getJSON(postUrl, function () {
-                $thisObject.val("");
-                $thisObject.toggleClass("toggled");
-                self.refresh();
-            });
-        }
-
-    });
-
+Remark.prototype.setSortType = function (sortType) {
+  if(sortType === 'remarks' || sortType === 'clicks'){
+    this.sortType = sortType;
+  }
+  else{
+    this.sortType = 'date';
+  }
 }
 
 Remark.prototype.initialize = function () {
@@ -97,11 +77,11 @@ Remark.prototype.initialize = function () {
 }
 
 Remark.prototype.refresh = function () {
+    console.log('refreshing');
     var self = this;
     var jsonUrl = self.apiUrl;
     $.getJSON(jsonUrl, function (bookmarks) {
-        self.bookmarks = bookmarks;
-        localStorage.setObject("bookmarks", bookmarks);
+        self.storeBookmarks(bookmarks);
         self.printBookmarks();
     }).fail(function (jqXHR) {
         if (jqXHR.status === 401) {
@@ -111,12 +91,14 @@ Remark.prototype.refresh = function () {
 }
 
 Remark.prototype.printBookmarks = function () {
+    console.log('printing');
     var self = this;
     var html = "";
     var bookmarksHtmlCreated = 0;
     previousId = 0;
-    for (var i = 0; i < self.bookmarks.length; i++) {
-        if (this.isBookmarkFiltered(self.bookmarks[i], i === 0 ? {"id": null} : self.bookmarks[previousId])) {
+    bookmarks = self.getBookmarks();
+    for (var i = 0; i < bookmarks.length; i++) {
+        if (this.isBookmarkFiltered(bookmarks[i], i === 0 ? {"id": null} : bookmarks[previousId])) {
             continue;
         }
         if (self.maxCount !== null && self.maxCount == bookmarksHtmlCreated) {
@@ -126,7 +108,7 @@ Remark.prototype.printBookmarks = function () {
         if (bookmarksHtmlCreated === self.firstEntriesCount) {
             $(self.containerDivId).html('<table class="items">' + html + '</table>');
         }
-        html += this.printBookmark(self.bookmarks[i]);
+        html += this.printBookmark(bookmarks[i]);
         previousId = i;
     }
     $(self.containerDivId).html('<table class="items">' + html + '</table>');
@@ -135,7 +117,7 @@ Remark.prototype.printBookmarks = function () {
         $.getJSON(
             self.apiUrl + "click/" + $anker.closest("tr").data("id") + "/",
             function (result) {
-                    self.refresh();
+                self.refresh();
             }
         );
     });
@@ -157,9 +139,67 @@ Remark.prototype.printBookmark = function (bookmark) {
             '</tr>' +
             '<tr>' +
             '<td colspan="4"></td>' +
-            '<td class="domain">' + bookmark['domain'] + '</td>'
+            '<td class="domain">' + bookmark['domain'] + '</td>' +
             '</tr>';
 
+}
+
+Remark.prototype.storeBookmarks = function (bookmarks) {
+  var self = this;
+  self.bookmarks = bookmarks;
+  localStorage.setObject("bookmarks", self.bookmarks);
+
+  //sort bookmarks
+  var remarkHighCount = 0;
+  var clickedHighCount = 0;
+  for (var i = 0; i < self.bookmarks.length; i++) {
+    if(bookmarks[i]['remarks'] > remarkHighCount){
+      remarkHighCount = bookmarks[i]['remarks'];
+    }
+    if(bookmarks[i]['clicks'] > clickedHighCount){
+      clickedHighCount = bookmarks[i]['clicks'];
+    }
+  }
+
+  var sortedRemarkedEntries = [];
+  var sortedClickedEntries = [];
+
+  var alreadyRemarkedEntries = new Map();
+  var alreadyClickedEntries = new Map();
+
+  for (var j = ((remarkHighCount > clickedHighCount) ? remarkHighCount : clickedHighCount); j >= 0; j--) {
+    //console.log(j);
+    for (var i = 0; i < self.bookmarks.length; i++) {
+    //console.log('qasdas');
+      if(bookmarks[i]['remarks'] == j && !alreadyRemarkedEntries.has(bookmarks[i]['id'])){
+        sortedRemarkedEntries.push(bookmarks[i]);
+        alreadyRemarkedEntries.set(bookmarks[i]['id']);
+
+      }
+      if(bookmarks[i]['clicks'] == j && !(alreadyClickedEntries.has(bookmarks[i]['id']))){
+        sortedClickedEntries.push(bookmarks[i]);
+        alreadyClickedEntries.set(bookmarks[i]['id']);
+      }
+    }
+  }
+
+  this.bookmarksRemarked = sortedRemarkedEntries;
+  this.bookmarksClicked = sortedClickedEntries;
+  localStorage.setObject("bookmarksSortedByRemarks", this.bookmarksRemarked);
+  localStorage.setObject("bookmarksSortedByClicks", this.bookmarksClicked);
+}
+
+Remark.prototype.getBookmarks = function () {
+  switch(this.sortType){
+    case 'date':
+      return this.bookmarks;
+    case 'remarks':
+      return this.bookmarksRemarked;
+    case 'clicks':
+      return this.bookmarksClicked;
+  }
+
+  return new Array();
 }
 
 Remark.prototype.isBookmarkFiltered = function (bookmark, lastBookmark) {
@@ -279,7 +319,7 @@ Remark.prototype.getClickVisibility = function (count) {
 Remark.prototype.login = function () {
     //no authorization -> no bookmarks cache
     console.log("not logged in");
-    localStorage.setObject("bookmarks", null);
+    this.storeBookmarks([]);
     window.location.href = "login.php";
 }
 
