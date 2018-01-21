@@ -65,7 +65,7 @@ Remark.prototype.initialize = function () {
         if (this.maxCount === null) {
             //TODO this does not work for more parameters
             console.log('width of ' + width + 'px seems to be a mobile device, so optimize printing by setting a limit');
-            location.href = location.href = '?items=20';
+            location.href = location.href = '?items=100';
         }
     }
 

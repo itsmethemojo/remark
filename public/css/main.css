@@ -32,6 +32,7 @@ table.items tr td{
 }
 
 table.items tr td.date{
+    display :none;
     font-size: 0.6em;
     padding-top: 5px;
     padding-right: 15px;
@@ -39,6 +40,7 @@ table.items tr td.date{
 }
 
 table.items tr td.time{
+    display :none;
     font-size: 0.6em;
     padding-top: 5px;
     padding-right: 15px;
@@ -165,6 +167,9 @@ input[name=sortType]{
 
 fieldset.sortType{
     border: 0;
+    width: 80px;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 fieldset.sortType label{
@@ -217,8 +222,9 @@ div.icon.level8 div:nth-child(4){
 }
 
 input.filter{
-    //width:200px;
+  margin-top: 5px;
     width:100%;
+    display: block;
 }
 
 div.add{
@@ -229,4 +235,43 @@ div.add{
   padding-top: 5px;
   padding-bottom: 5px;
   color: white;
+}
+
+
+div.container{
+  width: 100%;
+}
+
+@media (min-width : 800px) {
+  div.container{
+    margin-right: auto;
+    margin-left: auto;
+    width: 800px
+
+  }
+
+  div.container table.items tr td.date{
+    display: inline;
+  }
+
+  div.container table.items tr td.date{
+    display: inline;
+  }
+}
+
+@media (min-width : 400px) {
+  div.container div.add{
+    margin-right: auto;
+    margin-left: auto;
+    width: 400px
+
+
+  }
+
+  div.container input.filter{
+    margin-right: auto;
+    margin-left: auto;
+    width: 400px
+
+  }
 }
