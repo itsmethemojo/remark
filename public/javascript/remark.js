@@ -167,7 +167,14 @@ Remark.prototype.storeBookmarks = function (bookmarks) {
   var alreadyRemarkedEntries = new Map();
   var alreadyClickedEntries = new Map();
 
-  for (var j = ((remarkHighCount > clickedHighCount) ? remarkHighCount : clickedHighCount); j >= 0; j--) {
+  var maxC = remarkHighCount
+  if(Number(clickedHighCount) > Number(remarkHighCount)){
+      maxC = clickedHighCount;
+  }
+
+  console.log(remarkHighCount,clickedHighCount,maxC);
+
+  for (var j = maxC; j >= 0; j--) {
     //console.log(j);
     for (var i = 0; i < self.bookmarks.length; i++) {
     //console.log('qasdas');
