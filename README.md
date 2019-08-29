@@ -1,7 +1,18 @@
 # remark
 
+## required software
+
+* docker
+* [go-task](https://taskfile.org/#/installation?id=install-script)
+
+## usage
+
+build
+```
+task build
+```
+
 run local
 ```
-docker run -dit --name remark -v "$PWD/public":/usr/local/apache2/htdocs/ httpd:2.4 ;\
-echo -e "\n\n   open this url: http://"$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' remark)"/\n\n"
+./local-server.sh
 ```
