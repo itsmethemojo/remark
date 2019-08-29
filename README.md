@@ -7,6 +7,11 @@
 
 ## usage
 
+lint
+```
+task lint
+```
+
 build
 ```
 task build

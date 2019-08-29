@@ -10,6 +10,7 @@
     "add-external-libs": "cp node_modules/@ajusa/lit/dist/lit.css dist/css/ && cp node_modules/jquery/dist/jquery.min.js dist/javascript/",
     "transform-html-files": "cp src/*.html dist/",
     "build": "npm run clear-dist && npm install && npm run create-folder-structure && npm run copy-libs && npm run add-external-libs && npm run transform-html-files",
+    "lint": "npm install && ./node_modules/.bin/eslint src/javascript/*.js --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,5 +26,13 @@
   "dependencies": {
     "@ajusa/lit": "^1.1.0",
     "jquery": "^3.4.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.2.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.2.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
   }
 }
