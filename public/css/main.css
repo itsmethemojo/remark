@@ -1,62 +1,60 @@
-table.items{
-    padding: 0;
+div {
     font-size: 1em;
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
-table.items tr{
-  vertical-align: top;
-}
-
-table.items tr a{
+div.row span a{
     text-decoration: none;
 }
 
-table.items tr a:link {
+div.row span a:link {
     color: inherit;
 }
 
-table.items tr a:visited {
+div.row span a:visited {
     color: inherit;
 }
 
-table.items tr a:hover {
+div.row span a:hover {
     color: inherit;
 }
 
-table.items tr a:active {
+div.row span a:active {
     color: inherit;
 }
 
-table.items tr td{
-}
-
-table.items tr td.date{
-    display :none;
+div.row span.date{
     font-size: 0.6em;
     padding-top: 5px;
     padding-right: 15px;
     color: grey;
 }
 
-table.items tr td.time{
-    display :none;
+div.row span.time{
     font-size: 0.6em;
     padding-top: 5px;
     padding-right: 15px;
     color: grey;
 }
 
-table.items tr td.title{
+
+div.row div.website{
+  display: inline;
 }
 
-table.items tr td.domain{
+div.row div.website span.title{
+}
+
+div.row div.website span.domain{
     font-size: 0.6em;
     color: grey;
+    display: inline-block;
+    width: 90px;
+    padding-left: 15px;
 }
 
-table.items tr td.icon{
-    padding-top: 3px;
+div.items div.row div.icon{
+    margin-right: 5px;
 }
 
 
@@ -65,13 +63,16 @@ div.icon{
     width:16px;
     height:16px;
     display: inline-block;
-    margin-bottom: -2px;
-    margin-right: 4px;
+}
+
+div.icon{
+  vertical-align: middle;
 }
 
 div.icon div{
     position: absolute;
     background-color: white;
+    margin: 0 0 0 0 !important;
 }
 
 div.icon.remark{
@@ -161,26 +162,6 @@ div.icon.date div:nth-child(2){
     left: 4px;
 }
 
-input[name=sortType]{
-    display: none;
-}
-
-fieldset.sortType{
-    border: 0;
-    width: 80px;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-fieldset.sortType label{
-    cursor: pointer;
-}
-
-fieldset.sortType input[type="radio"]:checked+label div.icon {
-    background-color: grey;
-}
-
-
 div.icon.level0{
     opacity:0.1;
     background-color: white;
@@ -221,6 +202,37 @@ div.icon.level7 div:nth-child(4){
 div.icon.level8 div:nth-child(4){
 }
 
+
+input[name=sortType]{
+    display: none;
+}
+
+fieldset.sortType{
+    border: 0;
+    width: 80px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+fieldset.sortType label{
+    cursor: pointer;
+}
+
+fieldset.sortType input[type="radio"]:checked+label div.icon {
+    background-color: grey;
+}
+
+
+div.icon.level0{
+    opacity:0.1;
+    background-color: white;
+}
+
+div.icon.level0 div{
+    background-color: black;
+}
+
+
 input.filter{
   margin-top: 5px;
     width:100%;
@@ -236,43 +248,4 @@ div.add{
   padding-top: 5px;
   padding-bottom: 5px;
   color: white;
-}
-
-
-div.container{
-  width: 100%;
-}
-
-@media (min-width : 800px) {
-  div.container{
-    margin-right: auto;
-    margin-left: auto;
-    width: 800px
-
-  }
-
-  div.container table.items tr td.date{
-    display: inline;
-  }
-
-  div.container table.items tr td.time{
-    display: inline;
-  }
-}
-
-@media (min-width : 400px) {
-  div.container div.add{
-    margin-right: auto;
-    margin-left: auto;
-    width: 400px
-
-
-  }
-
-  div.container input.filter{
-    margin-right: auto;
-    margin-left: auto;
-    width: 400px
-
-  }
 }

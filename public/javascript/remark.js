@@ -7,7 +7,7 @@ function Remark(config)
 
 Remark.prototype.readConfig = function (config) {
     this.apiUrl = config.apiUrl;
-    this.containerDivId = config.containerDivId ? "#" + config.containerDivId : '#bookmarks';
+    this.containerDivId = config.containerDivId ? "#" + config.containerDivId : '#items';
     this.filterInputId = config.filterInputId ? "#" + config.filterInputId : '#filter';
     this.sortTypeSelectSelector = config.sortTypeSelectSelector ? config.sortTypeSelectSelector : 'input[type=radio][name=sortType]';
     this.firstEntriesCount = 30;
@@ -56,19 +56,6 @@ Remark.prototype.setSortType = function (sortType) {
 }
 
 Remark.prototype.initialize = function () {
-
-    var width = window.innerWidth
-                || document.documentElement.clientWidth
-                || document.body.clientWidth;
-
-    if (width < 600) {
-        if (this.maxCount === null) {
-            //TODO this does not work for more parameters
-            console.log('width of ' + width + 'px seems to be a mobile device, so optimize printing by setting a limit');
-            location.href = location.href = '?items=100';
-        }
-    }
-
     if (this.bookmarks.length !== 0) {
         //just print the old stuff at first
         this.printBookmarks();
@@ -106,16 +93,16 @@ Remark.prototype.printBookmarks = function () {
         }
         bookmarksHtmlCreated++;
         if (bookmarksHtmlCreated === self.firstEntriesCount) {
-            $(self.containerDivId).html('<table class="items">' + html + '</table>');
+            $(self.containerDivId).html(html);
         }
         html += this.printBookmark(bookmarks[i]);
         previousId = i;
     }
-    $(self.containerDivId).html('<table class="items">' + html + '</table>');
-    $("td.title a").click(function () {
+    $(self.containerDivId).html(html);
+    $("span.title a").click(function () {
         $anker = $(this);
         $.getJSON(
-            self.apiUrl + "click/" + $anker.closest("tr").data("id") + "/",
+            self.apiUrl + "click/" + $anker.closest("div").data("id") + "/",
             function (result) {
                 self.refresh();
             }
@@ -125,23 +112,23 @@ Remark.prototype.printBookmarks = function () {
 }
 
 Remark.prototype.printBookmark = function (bookmark) {
-
     var fourDivs = '<div></div><div></div><div></div><div></div>';
-    return '<tr data-id="' + bookmark['id'] + '">' +
-            '<td class="date">' + this.extractDate(bookmark['created']) + '</td>' +
-            '<td class="time">' + this.extractTime(bookmark['created']) + '</td>' +
-            '<td class="icon"><div class="icon remark level' + this.getRemarkVisibility(bookmark['remarks']) + '">' + fourDivs + '</div></td>' +
-            '<td class="icon"><div class="icon click level' + this.getClickVisibility(bookmark['clicks']) + '">' + fourDivs + '</div></td>' +
-            '<td class="title">' +
-            '<a target="_blank" href="' + bookmark['url'] + '">' +
-            (bookmark['customtitle'] === "" ? bookmark['title'] : bookmark['customtitle']) +
-            '</a></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td colspan="3"></td>' +
-            '<td class="domain">' + bookmark['domain'] + '</td>' +
-            '</tr>';
-
+    return '<div data-id="' + bookmark['id'] + '" class="row item">' +
+           '<div class="12 col">' +
+           '<span class="date">' + this.extractDate(bookmark['created']) + '</span>' +
+           '<span class="time">' + this.extractTime(bookmark['created']) + '</span>' +
+           '<div class="icon remark level' + this.getRemarkVisibility(bookmark['remarks']) + '">' + fourDivs + '</div>' +
+           '<div class="icon click level' + this.getClickVisibility(bookmark['clicks']) + '">' + fourDivs + '</div>' +
+           '<div data-id="' + bookmark['id'] + '" class="website">' +
+           '<span class="domain">' + bookmark['domain'] + '</span>' +
+           '<span class="title">' +
+           '<a target="_blank" href="' + bookmark['url'] + '">' +
+           (bookmark['customtitle'] === "" ? bookmark['title'] : bookmark['customtitle']) +
+           '</a>' +
+           '</span>' +
+           '</div>' +
+           '</div>' +
+           '</div>';
 }
 
 Remark.prototype.storeBookmarks = function (bookmarks) {
