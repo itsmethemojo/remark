@@ -9,8 +9,9 @@
     "copy-libs": "cp src/css/* dist/css/ && cp src/javascript/* dist/javascript/ && cp src/images/* dist/images/",
     "add-external-libs": "cp node_modules/@ajusa/lit/dist/lit.css dist/css/ && cp node_modules/jquery/dist/jquery.min.js dist/javascript/",
     "transform-html-files": "cp src/*.html dist/",
-    "build": "npm run clear-dist && npm install && npm run create-folder-structure && npm run copy-libs && npm run add-external-libs && npm run transform-html-files",
+    "build": "npm run add-git-hooks && npm run clear-dist && npm install && npm run create-folder-structure && npm run copy-libs && npm run add-external-libs && npm run transform-html-files",
     "lint": "npm install && ./node_modules/.bin/eslint src/javascript/*.js --fix",
+    "add-git-hooks": "rm .git/hooks/* && cp hooks/* .git/hooks/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
