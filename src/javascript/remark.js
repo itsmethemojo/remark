@@ -99,7 +99,7 @@ Remark.prototype.printBookmarks = function () {
   $(self.containerDivId).html(html)
   $('span.title a').click(function () {
     var $anker = $(this)
-    $.getJSON(
+    $.post(
       self.apiUrl + 'click/' + $anker.closest('div').data('id') + '/',
       function (result) {
         self.refresh()
