@@ -8,11 +8,10 @@
         <link href="css/lit.css"  media="all" rel="stylesheet" />
     </head>
     <body>
-
         <div class="controls">
             <div class="row item">
                 <div class="12 col">
-                    <div class="add">
+                    <div class="add" id="add">
                         +
                     </div>
                 </div>
@@ -51,7 +50,9 @@
 
         <script>
               var test = new Remark({
-                  apiUrl : "http://172.17.0.5/"
+                  apiUrl : "http://172.17.0.5/",
+                  indexPath : "/",
+                  addPath : "/add.html"
             });
         </script>
     </body>

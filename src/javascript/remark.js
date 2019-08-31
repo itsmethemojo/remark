@@ -6,6 +6,9 @@ function Remark (config) {
 
 Remark.prototype.readConfig = function (config) {
   this.apiUrl = config.apiUrl
+  this.indexPath = config.indexPath
+  this.addPath = config.addPath
+  this.addButtonId = config.addButtonId ? '#' + config.addButtonId : '#add'
   this.containerDivId = config.containerDivId ? '#' + config.containerDivId : '#items'
   this.filterInputId = config.filterInputId ? '#' + config.filterInputId : '#filter'
   this.sortTypeSelectSelector = config.sortTypeSelectSelector ? config.sortTypeSelectSelector : 'input[type=radio][name=sortType]'
@@ -20,6 +23,7 @@ Remark.prototype.readConfig = function (config) {
   this.maxCount = this.getUrlParameter('items')
   // TODO read it from select
   this.sortType = 'date'
+  this.sharedRemark = this.getUrlParameter('remark')
 }
 
 Remark.prototype.listen = function () {
@@ -43,6 +47,11 @@ Remark.prototype.listen = function () {
       self.printBookmarks()
     }, 500)
   })
+
+  // add button click target
+  $(self.addButtonId).click(function () {
+    location.href = self.addPath
+  })
 }
 
 Remark.prototype.setSortType = function (sortType) {
@@ -54,6 +63,10 @@ Remark.prototype.setSortType = function (sortType) {
 }
 
 Remark.prototype.initialize = function () {
+  if (this.sharedRemark) {
+    location.href = this.addPath + '?remark=' + this.sharedRemark
+  }
+
   if (this.bookmarks.length !== 0) {
     // just print the old stuff at first
     this.printBookmarks()
