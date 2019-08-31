@@ -17,6 +17,11 @@ build
 task build
 ```
 
+build on file watch
+```
+./watch.sh -d
+```
+
 run local
 ```
 ./local-server.sh
