@@ -30,10 +30,10 @@
 
         <script>
               var test = new Remark({
-                  apiUrl : "http://localhost:8080/v1/bookmark/",
+                  apiUrl : "{{ REMARK_API }}",
                   indexPath : "/",
                   addPath : "/add.html",
-                  loginUrl : "TODO.html"
+                  loginUrl : "{{ LOGIN_URL }}"
             });
         </script>
     </body>
