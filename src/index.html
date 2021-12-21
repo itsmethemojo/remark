@@ -21,26 +21,6 @@
                     <input id="filter" class="filter" type="text" placeholder="search" value=""/>
                 </div>
             </div>
-            <div class="row item">
-                <div class="12 col">
-                    <fieldset class="sortType">
-                        <input type="radio" id="radioSortTypeDate" name="sortType" value="date" checked>
-                        <label for="radioSortTypeDate">
-                            <div class="icon date"><div></div><div></div><div></div></div>
-                        </label>
-
-                        <input type="radio" id="radioSortTypeRemarks" name="sortType" value="remarks">
-                        <label for="radioSortTypeRemarks">
-                            <div class="icon remark"><div></div><div></div><div></div></div>
-                        </label>
-
-                        <input type="radio" id="radioSortTypeClicks" name="sortType" value="clicks">
-                        <label for="radioSortTypeClicks">
-                            <div class="icon click"><div></div><div></div><div></div></div>
-                        </label>
-                    </fieldset>
-                </div>
-            </div>
         </div>
 
         <div id="items" class="items"></div>
@@ -50,9 +30,10 @@
 
         <script>
               var test = new Remark({
-                  apiUrl : "http://172.17.0.5/",
+                  apiUrl : "http://localhost:8080/v1/bookmark/",
                   indexPath : "/",
-                  addPath : "/add.html"
+                  addPath : "/add.html",
+                  loginUrl : "TODO.html"
             });
         </script>
     </body>
