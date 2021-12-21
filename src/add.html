@@ -28,12 +28,14 @@
 
         <script src="javascript/jquery.min.js"></script>
         <script src="javascript/remark-add.js"></script>
+        <script src="javascript/jquery.cookie.js"></script>
 
         <script>
               var test = new RemarkAdd({
                   apiUrl : "{{ REMARK_API }}",
                   indexPath : "/",
-                  addPath : "/add.html"
+                  addPath : "/add.html",
+                  authorizationCookie : "{{ AUTHORIZATION_COOKIE }}"
             });
         </script>
     </body>

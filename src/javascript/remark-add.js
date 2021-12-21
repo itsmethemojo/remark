@@ -8,6 +8,7 @@ RemarkAdd.prototype.readConfig = function (config) {
   this.apiUrl = config.apiUrl
   this.indexPath = config.indexPath
   this.addPath = config.addPath
+  this.authorizationCookie = config.authorizationCookie
   this.remarkInputId = config.remarkInputId ? '#' + config.remarkInputId : '#url'
   this.remarkButtonId = config.remarkButtonId ? '#' + config.remarkButtonId : '#add'
   this.sharedRemark = this.getUrlParameter('remark')
@@ -44,10 +45,10 @@ RemarkAdd.prototype.addRemark = function (url) {
 // TODO following functions can get in a shared lib
 
 RemarkAdd.prototype.setAjaxAuthentification = function () {
-  // TODO read this value from a cookie
+  var self = this
   $.ajaxSetup({
     headers: {
-      Authorization: 'LOCAL_TEST_TOKEN_1'
+      Authorization: $.cookie(self.authorizationCookie)
     }
   })
 }

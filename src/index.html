@@ -26,6 +26,7 @@
         <div id="items" class="items"></div>
 
         <script src="javascript/jquery.min.js"></script>
+        <script src="javascript/jquery.cookie.js"></script>
         <script src="javascript/remark.js"></script>
 
         <script>
@@ -33,7 +34,8 @@
                   apiUrl : "{{ REMARK_API }}",
                   indexPath : "/",
                   addPath : "/add.html",
-                  loginUrl : "{{ LOGIN_URL }}"
+                  loginUrl : "{{ LOGIN_URL }}",
+                  authorizationCookie : "{{ AUTHORIZATION_COOKIE }}"
             });
         </script>
     </body>
