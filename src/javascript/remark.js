@@ -9,6 +9,7 @@ Remark.prototype.readConfig = function (config) {
   this.indexPath = config.indexPath
   this.addPath = config.addPath
   this.loginUrl = config.loginUrl
+  this.authorizationCookie = config.authorizationCookie
   this.addButtonId = config.addButtonId ? '#' + config.addButtonId : '#add'
   this.containerDivId = config.containerDivId ? '#' + config.containerDivId : '#items'
   this.filterInputId = config.filterInputId ? '#' + config.filterInputId : '#filter'
@@ -250,7 +251,7 @@ Remark.prototype.getClickVisibility = function (count) {
 Remark.prototype.login = function () {
   // no authorization -> no bookmarks cache
   console.log('not logged in')
-  this.storeBookmarks([])
+  this.storeBookmarks({})
   window.location.href = self.loginUrl
 }
 
@@ -262,10 +263,10 @@ Remark.prototype.getUrlParameter = function (key) {
 }
 
 Remark.prototype.setAjaxAuthentification = function () {
-  // TODO read this value from a cookie
+  var self = this
   $.ajaxSetup({
     headers: {
-      Authorization: 'LOCAL_TEST_TOKEN_1'
+      Authorization: $.cookie(self.authorizationCookie)
     }
   })
 }
