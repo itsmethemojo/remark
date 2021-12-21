@@ -255,6 +255,20 @@ tasks:
           mkdir -p {{.DIR}}
         silent: true
 
+  audit-fix:
+    desc: task audit-fix
+    deps:
+      - _init:check_if_init_needed
+    cmds:
+      - task: _script:start_watch
+        vars: {TASK_NAME: "audit-fix"}
+      - task: _print_version
+        vars: {TASK_NAME: "audit-fix"}
+      - task: _script:run
+        vars: {TASK_NAME: "audit-fix"}
+      - task: _script:stop_watch
+        vars: {TASK_NAME: "audit-fix"}
+
   build:
     desc: task build
     deps:
