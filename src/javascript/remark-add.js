@@ -31,13 +31,25 @@ RemarkAdd.prototype.listen = function () {
 
 RemarkAdd.prototype.addRemark = function (url) {
   var self = this
+  self.setAjaxAuthentification()
   $.post(
     self.apiUrl + 'remark/',
-    { url: url },
+    'url=' + url,
     function (result) {
       location.href = self.indexPath
     }
   )
+}
+
+// TODO following functions can get in a shared lib
+
+RemarkAdd.prototype.setAjaxAuthentification = function () {
+  // TODO read this value from a cookie
+  $.ajaxSetup({
+    headers: {
+      Authorization: 'LOCAL_TEST_TOKEN_1'
+    }
+  })
 }
 
 RemarkAdd.prototype.getUrlParameter = function (key) {

@@ -8,21 +8,16 @@ Remark.prototype.readConfig = function (config) {
   this.apiUrl = config.apiUrl
   this.indexPath = config.indexPath
   this.addPath = config.addPath
+  this.loginUrl = config.loginUrl
   this.addButtonId = config.addButtonId ? '#' + config.addButtonId : '#add'
   this.containerDivId = config.containerDivId ? '#' + config.containerDivId : '#items'
   this.filterInputId = config.filterInputId ? '#' + config.filterInputId : '#filter'
-  this.sortTypeSelectSelector = config.sortTypeSelectSelector ? config.sortTypeSelectSelector : 'input[type=radio][name=sortType]'
+  // when having a lot of results after this amount the list will be rendered to show fast results
   this.firstEntriesCount = 30
   this.wto = 0
   this.filter = $(this.filterInputId).val()
-  this.remarks = $(this.remarkSelectId).val()
-  this.clicks = $(this.clickSelectId).val()
   this.bookmarks = localStorage.getObject('bookmarks') || []
-  this.bookmarksRemarked = localStorage.getObject('bookmarksSortedByRemarks') || []
-  this.bookmarksClicked = localStorage.getObject('bookmarksSortedByClicks') || []
   this.maxCount = this.getUrlParameter('items')
-  // TODO read it from select
-  this.sortType = 'date'
   this.sharedRemark = this.getUrlParameter('remark')
 }
 
@@ -65,6 +60,7 @@ Remark.prototype.setSortType = function (sortType) {
 Remark.prototype.initialize = function () {
   if (this.sharedRemark) {
     location.href = this.addPath + '?remark=' + this.sharedRemark
+    return
   }
 
   if (this.bookmarks.length !== 0) {
@@ -78,6 +74,7 @@ Remark.prototype.refresh = function () {
   console.log('refreshing')
   var self = this
   var jsonUrl = self.apiUrl
+  self.setAjaxAuthentification()
   $.getJSON(jsonUrl, function (bookmarks) {
     self.storeBookmarks(bookmarks)
     self.printBookmarks()
@@ -96,12 +93,13 @@ Remark.prototype.printBookmarks = function () {
   var previousId = 0
   var bookmarks = self.getBookmarks()
   for (var i = 0; i < bookmarks.length; i++) {
-    if (this.isBookmarkFiltered(bookmarks[i], i === 0 ? { id: null } : bookmarks[previousId])) {
+    if (this.isBookmarkFiltered(bookmarks[i], i === 0 ? { ID: null } : bookmarks[previousId])) {
       continue
     }
     if (self.maxCount !== null && self.maxCount === bookmarksHtmlCreated) {
-      break
+      continue
     }
+
     bookmarksHtmlCreated++
     if (bookmarksHtmlCreated === self.firstEntriesCount) {
       $(self.containerDivId).html(html)
@@ -112,8 +110,10 @@ Remark.prototype.printBookmarks = function () {
   $(self.containerDivId).html(html)
   $('span.title a').click(function () {
     var $anker = $(this)
+    self.setAjaxAuthentification()
     $.post(
-      self.apiUrl + 'click/' + $anker.closest('div').data('id') + '/',
+      self.apiUrl + 'click/',
+      'id=' + $anker.closest('div').data('id'),
       function (result) {
         self.refresh()
       }
@@ -123,17 +123,16 @@ Remark.prototype.printBookmarks = function () {
 
 Remark.prototype.printBookmark = function (bookmark) {
   var fourDivs = '<div></div><div></div><div></div><div></div>'
-  return '<div data-id="' + bookmark.id + '" class="row item">' +
+  return '<div data-id="' + bookmark.ID + '" class="row item">' +
            '<div class="12 col">' +
-           '<span class="date">' + this.extractDate(bookmark.created) + '</span>' +
-           '<span class="time">' + this.extractTime(bookmark.created) + '</span>' +
-           '<div class="icon remark level' + this.getRemarkVisibility(bookmark.remarks) + '">' + fourDivs + '</div>' +
-           '<div class="icon click level' + this.getClickVisibility(bookmark.clicks) + '">' + fourDivs + '</div>' +
-           '<div data-id="' + bookmark.id + '" class="website">' +
-           '<span class="domain">' + bookmark.domain + '</span>' +
+           '<span class="date">' + this.extractDate(bookmark.CreatedAt) + '</span>' +
+           '<span class="time">' + this.extractTime(bookmark.CreatedAt) + '</span>' +
+           '<div class="icon remark level' + this.getRemarkVisibility(bookmark.RemarkCount) + '">' + fourDivs + '</div>' +
+           '<div class="icon click level' + this.getClickVisibility(bookmark.ClickCount) + '">' + fourDivs + '</div>' +
+           '<div data-id="' + bookmark.ID + '" class="website">' +
            '<span class="title">' +
-           '<a target="_blank" href="' + bookmark.url + '">' +
-           (bookmark.customtitle === '' ? bookmark.title : bookmark.customtitle) +
+           '<a target="_blank" href="' + bookmark.Url + '">' +
+           bookmark.Title +
            '</a>' +
            '</span>' +
            '</div>' +
@@ -145,82 +144,23 @@ Remark.prototype.storeBookmarks = function (bookmarks) {
   var self = this
   self.bookmarks = bookmarks
   localStorage.setObject('bookmarks', self.bookmarks)
-
-  // sort bookmarks
-  var remarkHighCount = 0
-  var clickedHighCount = 0
-  for (var i = 0; i < self.bookmarks.length; i++) {
-    if (bookmarks[i].remarks > remarkHighCount) {
-      remarkHighCount = bookmarks[i].remarks
-    }
-    if (bookmarks[i].clicks > clickedHighCount) {
-      clickedHighCount = bookmarks[i].clicks
-    }
-  }
-
-  var sortedRemarkedEntries = []
-  var sortedClickedEntries = []
-
-  var alreadyRemarkedEntries = new Map()
-  var alreadyClickedEntries = new Map()
-
-  var maxC = remarkHighCount
-  if (Number(clickedHighCount) > Number(remarkHighCount)) {
-    maxC = clickedHighCount
-  }
-
-  console.log(remarkHighCount, clickedHighCount, maxC)
-
-  for (var j = maxC; j >= 0; j--) {
-    for (var k = 0; k < self.bookmarks.length; k++) {
-      if (bookmarks[k].remarks === j && !alreadyRemarkedEntries.has(bookmarks[k].id)) {
-        sortedRemarkedEntries.push(bookmarks[k])
-        alreadyRemarkedEntries.set(bookmarks[k].id)
-      }
-      if (bookmarks[k].clicks === j && !(alreadyClickedEntries.has(bookmarks[k].id))) {
-        sortedClickedEntries.push(bookmarks[k])
-        alreadyClickedEntries.set(bookmarks[k].id)
-      }
-    }
-  }
-
-  this.bookmarksRemarked = sortedRemarkedEntries
-  this.bookmarksClicked = sortedClickedEntries
-  localStorage.setObject('bookmarksSortedByRemarks', this.bookmarksRemarked)
-  localStorage.setObject('bookmarksSortedByClicks', this.bookmarksClicked)
 }
 
 Remark.prototype.getBookmarks = function () {
-  switch (this.sortType) {
-    case 'date':
-      return this.bookmarks
-    case 'remarks':
-      return this.bookmarksRemarked
-    case 'clicks':
-      return this.bookmarksClicked
+  var bookmarkMap = {}
+  for (var i = 0; i < this.bookmarks.Bookmarks.length; i++) {
+    bookmarkMap[this.bookmarks.Bookmarks[i].ID] = this.bookmarks.Bookmarks[i]
   }
-
-  return []
+  var returnBookmarks = []
+  for (var j = 0; j < this.bookmarks.Remarks.length; j++) {
+    returnBookmarks.push(bookmarkMap[this.bookmarks.Remarks[j].BookmarkID])
+  }
+  return returnBookmarks
 }
 
 Remark.prototype.isBookmarkFiltered = function (bookmark, lastBookmark) {
-  if (lastBookmark.id === bookmark.id) {
-    return true
-  }
-
-  if (this.remarks !== '' && this.remarks !== '=0' && this.remarks > bookmark.remarks) {
-    return true
-  }
-
-  if (this.remarks === '=0' && bookmark.remarks > 0) {
-    return true
-  }
-
-  if (this.clicks !== '' && this.clicks !== '=0' && this.clicks > bookmark.clicks) {
-    return true
-  }
-
-  if (this.clicks === '=0' && bookmark.clicks > 0) {
+  // make sure to not show twice the same entry even if it was remarked after another
+  if (lastBookmark.ID === bookmark.ID) {
     return true
   }
 
@@ -231,9 +171,8 @@ Remark.prototype.isBookmarkFiltered = function (bookmark, lastBookmark) {
   // determine if single or multi term
   if (this.filter.indexOf(' ') === -1) {
     if (
-      bookmark.title.toLowerCase().indexOf(this.filter) !== -1 ||
-                bookmark.customtitle.toLowerCase().indexOf(this.filter) !== -1 ||
-                bookmark.url.toLowerCase().indexOf(this.filter) !== -1
+      bookmark.Title.toLowerCase().indexOf(this.filter) !== -1 ||
+                bookmark.Url.toLowerCase().indexOf(this.filter) !== -1
     ) {
       return false
     }
@@ -244,9 +183,8 @@ Remark.prototype.isBookmarkFiltered = function (bookmark, lastBookmark) {
         continue
       }
       if (
-        bookmark.title.toLowerCase().indexOf(searchTerms[i]) === -1 &&
-                    bookmark.customtitle.toLowerCase().indexOf(searchTerms[i]) === -1 &&
-                    bookmark.url.toLowerCase().indexOf(searchTerms[i]) === -1
+        bookmark.Title.toLowerCase().indexOf(searchTerms[i]) === -1 &&
+                    bookmark.Url.toLowerCase().indexOf(searchTerms[i]) === -1
       ) {
         return true
       }
@@ -257,19 +195,13 @@ Remark.prototype.isBookmarkFiltered = function (bookmark, lastBookmark) {
   return true
 }
 
-Remark.prototype.extractDate = function (unixTimestamp) {
-  var a = new Date(unixTimestamp * 1000)
-  var year = a.getFullYear()
-  var month = a.getMonth() < 9 ? '0' + (a.getMonth() + 1) : (a.getMonth() + 1)
-  var date = a.getDate() < 10 ? '0' + a.getDate() : a.getDate()
-  return date + '.' + month + '.' + year
+Remark.prototype.extractDate = function (dateString) {
+  return dateString.split('T')[0].split('-').reverse().join('.')
 }
 
-Remark.prototype.extractTime = function (unixTimestamp) {
-  var a = new Date(unixTimestamp * 1000)
-  var hour = a.getHours() < 10 ? '0' + a.getHours() : a.getHours()
-  var minute = a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes()
-  return hour + ':' + minute
+Remark.prototype.extractTime = function (dateString) {
+  var splits = dateString.split('T')[1].split('.')[0].split(':')
+  return splits[0] + ':' + splits[1]
 }
 
 Remark.prototype.getRemarkVisibility = function (count) {
@@ -319,7 +251,7 @@ Remark.prototype.login = function () {
   // no authorization -> no bookmarks cache
   console.log('not logged in')
   this.storeBookmarks([])
-  window.location.href = 'login.php'
+  window.location.href = self.loginUrl
 }
 
 Remark.prototype.getUrlParameter = function (key) {
@@ -327,6 +259,15 @@ Remark.prototype.getUrlParameter = function (key) {
   var regex = new RegExp(regexS)
   var results = regex.exec(location.href)
   return results == null ? null : results[1]
+}
+
+Remark.prototype.setAjaxAuthentification = function () {
+  // TODO read this value from a cookie
+  $.ajaxSetup({
+    headers: {
+      Authorization: 'LOCAL_TEST_TOKEN_1'
+    }
+  })
 }
 
 Storage.prototype.setObject = function (key, value) {

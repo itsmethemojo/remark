@@ -214,14 +214,6 @@ fieldset.sortType{
     margin-left: auto;
 }
 
-fieldset.sortType label{
-    cursor: pointer;
-}
-
-fieldset.sortType input[type="radio"]:checked+label div.icon {
-    background-color: grey;
-}
-
 
 div.icon.level0{
     opacity:0.1;
