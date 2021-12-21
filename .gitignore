@@ -1,3 +1,5 @@
 /dist
 /node_modules
-/buildpack/tmp/
+/.home/
+! /.dckrz/
+/.dckrz/tmp/
