@@ -251,7 +251,8 @@ Remark.prototype.getClickVisibility = function (count) {
 Remark.prototype.login = function () {
   // no authorization -> no bookmarks cache
   console.log('not logged in')
-  this.storeBookmarks({})
+  this.storeBookmarks({ Bookmarks: [], Remarks: [], Clicks: [] })
+  this.refresh()
   window.location.href = self.loginUrl
 }
 
