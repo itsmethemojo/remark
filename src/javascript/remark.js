@@ -82,6 +82,8 @@ Remark.prototype.refresh = function () {
   }).fail(function (jqXHR) {
     if (jqXHR.status === 401) {
       self.login()
+    } else {
+      console.log('something is wrong')
     }
   })
 }
@@ -250,10 +252,10 @@ Remark.prototype.getClickVisibility = function (count) {
 
 Remark.prototype.login = function () {
   // no authorization -> no bookmarks cache
-  console.log('not logged in')
+  console.log('not logged in, redirecting to ' + this.loginUrl)
   this.storeBookmarks({ Bookmarks: [], Remarks: [], Clicks: [] })
-  this.refresh()
-  window.location.href = self.loginUrl
+  this.printBookmarks()
+  window.location.href = this.loginUrl
 }
 
 Remark.prototype.getUrlParameter = function (key) {
