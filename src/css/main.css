@@ -1,6 +1,7 @@
-div {
+body{
     font-size: 1em;
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    margin: .5em .5em
 }
 
 div.row span a{
