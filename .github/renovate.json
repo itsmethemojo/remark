@@ -1,0 +1,14 @@
+{
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "commitMessagePrefix": "",
+      "groupName": "update npm packages"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "commitMessagePrefix": "",
+      "groupName": "update github-actions"
+    }
+  ]
+}
