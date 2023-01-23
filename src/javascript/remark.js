@@ -52,7 +52,7 @@ Remark.prototype.listen = function () {
     self.addRemark(url)
   })
 
-  $(self.filterInputId).focus();
+  $(self.filterInputId).focus()
 }
 
 Remark.prototype.addRemark = function (url) {
