@@ -51,6 +51,8 @@ Remark.prototype.listen = function () {
     var url = $(self.filterInputId).val()
     self.addRemark(url)
   })
+
+  $(self.filterInputId).focus();
 }
 
 Remark.prototype.addRemark = function (url) {
