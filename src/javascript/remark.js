@@ -22,7 +22,7 @@ Remark.prototype.readConfig = function (config) {
 }
 
 Remark.prototype.listen = function () {
-  var self = this
+  const self = this
 
   // react on filterfield typing
   $(self.filterInputId).on('input', function (event) {
@@ -48,7 +48,7 @@ Remark.prototype.listen = function () {
   })
 
   $(self.addButtonId).click(function () {
-    var url = $(self.filterInputId).val()
+    const url = $(self.filterInputId).val()
     self.addRemark(url)
   })
 
@@ -56,7 +56,7 @@ Remark.prototype.listen = function () {
 }
 
 Remark.prototype.addRemark = function (url) {
-  var self = this
+  const self = this
   self.setAjaxAuthentification()
   $.post(
     self.apiUrl + 'remark/',
@@ -90,8 +90,8 @@ Remark.prototype.initialize = function () {
 
 Remark.prototype.refresh = function () {
   console.log('refreshing')
-  var self = this
-  var jsonUrl = self.apiUrl
+  const self = this
+  const jsonUrl = self.apiUrl
   self.setAjaxAuthentification()
   $.getJSON(jsonUrl, function (bookmarks) {
     self.storeBookmarks(bookmarks)
@@ -107,12 +107,12 @@ Remark.prototype.refresh = function () {
 
 Remark.prototype.printBookmarks = function () {
   console.log('printing')
-  var self = this
-  var html = ''
-  var bookmarksHtmlCreated = 0
-  var previousId = 0
-  var bookmarks = self.getBookmarks()
-  for (var i = 0; i < bookmarks.length; i++) {
+  const self = this
+  let html = ''
+  let bookmarksHtmlCreated = 0
+  let previousId = 0
+  const bookmarks = self.getBookmarks()
+  for (let i = 0; i < bookmarks.length; i++) {
     if (this.isBookmarkFiltered(bookmarks[i], i === 0 ? { ID: null } : bookmarks[previousId])) {
       continue
     }
@@ -129,7 +129,7 @@ Remark.prototype.printBookmarks = function () {
   }
   $(self.containerDivId).html(html)
   $('span.title a').click(function () {
-    var $anker = $(this)
+    const $anker = $(this)
     self.setAjaxAuthentification()
     $.post(
       self.apiUrl + 'click/',
@@ -142,7 +142,7 @@ Remark.prototype.printBookmarks = function () {
 }
 
 Remark.prototype.printBookmark = function (bookmark) {
-  var fourDivs = '<div></div><div></div><div></div><div></div>'
+  const fourDivs = '<div></div><div></div><div></div><div></div>'
   return '<div data-id="' + bookmark.ID + '" class="row item">' +
            '<div class="12 col">' +
            '<span class="date" onclick="edit(\'' + bookmark.ID + '\')">' + this.extractDate(bookmark.CreatedAt) + '</span>' +
@@ -165,20 +165,20 @@ edit = function (id) {
 }
 
 Remark.prototype.edit = function (id) {
-  var self = this
+  const self = this
 
-  var bookmarks = self.bookmarks.Bookmarks
+  const bookmarks = self.bookmarks.Bookmarks
 
-  var editBookmark
+  let editBookmark
 
-  for (var i = 0; i < bookmarks.length; i++) {
+  for (let i = 0; i < bookmarks.length; i++) {
     if (bookmarks[i].ID === Number(id)) {
       editBookmark = bookmarks[i]
       break
     }
   }
 
-  var newTitle = prompt('change title for\n\n' + editBookmark.Url + '\n', editBookmark.Title)
+  const newTitle = prompt('change title for\n\n' + editBookmark.Url + '\n', editBookmark.Title)
 
   if (newTitle) {
     self.setAjaxAuthentification()
@@ -193,18 +193,18 @@ Remark.prototype.edit = function (id) {
 }
 
 Remark.prototype.storeBookmarks = function (bookmarks) {
-  var self = this
+  const self = this
   self.bookmarks = bookmarks
   localStorage.setObject('bookmarks', self.bookmarks)
 }
 
 Remark.prototype.getBookmarks = function () {
-  var bookmarkMap = {}
-  for (var i = 0; i < this.bookmarks.Bookmarks.length; i++) {
+  const bookmarkMap = {}
+  for (let i = 0; i < this.bookmarks.Bookmarks.length; i++) {
     bookmarkMap[this.bookmarks.Bookmarks[i].ID] = this.bookmarks.Bookmarks[i]
   }
-  var returnBookmarks = []
-  for (var j = 0; j < this.bookmarks.Remarks.length; j++) {
+  const returnBookmarks = []
+  for (let j = 0; j < this.bookmarks.Remarks.length; j++) {
     returnBookmarks.push(bookmarkMap[this.bookmarks.Remarks[j].BookmarkID])
   }
   return returnBookmarks
@@ -229,8 +229,8 @@ Remark.prototype.isBookmarkFiltered = function (bookmark, lastBookmark) {
       return false
     }
   } else {
-    var searchTerms = this.filter.split(' ')
-    for (var i = 0; i < searchTerms.length; i++) {
+    const searchTerms = this.filter.split(' ')
+    for (let i = 0; i < searchTerms.length; i++) {
       if (searchTerms[i] === '') {
         continue
       }
@@ -252,7 +252,7 @@ Remark.prototype.extractDate = function (dateString) {
 }
 
 Remark.prototype.extractTime = function (dateString) {
-  var splits = dateString.split('T')[1].split('.')[0].split(':')
+  const splits = dateString.split('T')[1].split('.')[0].split(':')
   return splits[0] + ':' + splits[1]
 }
 
@@ -308,14 +308,14 @@ Remark.prototype.login = function () {
 }
 
 Remark.prototype.getUrlParameter = function (key) {
-  var regexS = '[\\?&]' + key + '=([^&#]*)'
-  var regex = new RegExp(regexS)
-  var results = regex.exec(location.href)
+  const regexS = '[\\?&]' + key + '=([^&#]*)'
+  const regex = new RegExp(regexS)
+  const results = regex.exec(location.href)
   return results == null ? null : results[1]
 }
 
 Remark.prototype.setAjaxAuthentification = function () {
-  var self = this
+  const self = this
   $.ajaxSetup({
     headers: {
       Authorization: $.cookie(self.authorizationCookie)
