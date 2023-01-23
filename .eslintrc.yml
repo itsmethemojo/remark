@@ -5,6 +5,7 @@ extends:
   - standard
 globals:
   $: readonly
+  edit: writeable
   Atomics: readonly
   SharedArrayBuffer: readonly
 parserOptions:
