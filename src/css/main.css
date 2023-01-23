@@ -33,9 +33,15 @@ div.row span.date{
 }
 
 div.row span.time{
-    font-size: 0.6em;
     padding-top: 5px;
     padding-right: 15px;
+    color: grey;
+}
+
+div.row span.delete{
+    cursor: pointer;
+    font-size: 1em;
+    padding-top: 5px;
     color: grey;
 }
 
@@ -45,8 +51,10 @@ div.row div.website{
 }
 
 div.row div.website span.title{
+    padding-right: 5px;
 }
 
+/*TODO might be interesting to render on big screen*/
 div.row div.website span.domain{
     font-size: 0.6em;
     color: grey;
@@ -202,6 +210,7 @@ div.icon.level7 div:nth-child(4){
 }
 
 div.icon.level8 div:nth-child(4){
+    width: 0px;
 }
 
 
@@ -214,16 +223,6 @@ fieldset.sortType{
     width: 80px;
     margin-right: auto;
     margin-left: auto;
-}
-
-
-div.icon.level0{
-    opacity:0.1;
-    background-color: white;
-}
-
-div.icon.level0 div{
-    background-color: black;
 }
 
 
