@@ -35,7 +35,11 @@ Remark.prototype.listen = function () {
   })
 
   $('#edit').on('change', function (event) {
-    self.edit($(this).val().trim())
+    self.edit($(this).val())
+  })
+
+  $('#delete').on('change', function (event) {
+    self.delete($(this).val())
   })
 
   // react on changing sort type
@@ -145,7 +149,7 @@ Remark.prototype.printBookmark = function (bookmark) {
   const fourDivs = '<div></div><div></div><div></div><div></div>'
   return '<div data-id="' + bookmark.ID + '" class="row item">' +
            '<div class="12 col">' +
-           '<span class="date" onclick="edit(\'' + bookmark.ID + '\')">' + this.extractDate(bookmark.CreatedAt) + '</span>' +
+           '<span class="date" onclick="triggerLineAction(\'edit\', \'' + bookmark.ID + '\')">' + this.extractDate(bookmark.CreatedAt) + '</span>' +
            '<span class="time">' + this.extractTime(bookmark.CreatedAt) + '</span>' +
            '<div class="icon remark level' + this.getRemarkVisibility(bookmark.RemarkCount) + '">' + fourDivs + '</div>' +
            '<div class="icon click level' + this.getClickVisibility(bookmark.ClickCount) + '">' + fourDivs + '</div>' +
@@ -155,29 +159,27 @@ Remark.prototype.printBookmark = function (bookmark) {
            bookmark.Title +
            '</a>' +
            '</span>' +
+           '<span class="delete" onclick="triggerLineAction(\'delete\', \'' + bookmark.ID + '\')">&#128465;</span>' +
            '</div>' +
            '</div>' +
            '</div>'
 }
 
-edit = function (id) {
-  $('#edit').val(id).trigger('change')
+Remark.prototype.getBookmarkById = function (id) {
+  const self = this
+  const bookmarks = self.bookmarks.Bookmarks
+  const foundBookmark = null
+  for (let i = 0; i < bookmarks.length; i++) {
+    if (bookmarks[i].ID === Number(id)) {
+      return bookmarks[i]
+    }
+  }
+  return foundBookmark
 }
 
 Remark.prototype.edit = function (id) {
   const self = this
-
-  const bookmarks = self.bookmarks.Bookmarks
-
-  let editBookmark
-
-  for (let i = 0; i < bookmarks.length; i++) {
-    if (bookmarks[i].ID === Number(id)) {
-      editBookmark = bookmarks[i]
-      break
-    }
-  }
-
+  const editBookmark = self.getBookmarkById(id)
   const newTitle = prompt('change title for\n\n' + editBookmark.Url + '\n', editBookmark.Title)
 
   if (newTitle) {
@@ -189,6 +191,22 @@ Remark.prototype.edit = function (id) {
         self.refresh()
       }
     )
+  }
+}
+
+Remark.prototype.delete = function (id) {
+  const self = this
+  const deleteBookmark = self.getBookmarkById(id)
+  const deletePrompt = confirm('delete this bookmark?\n\n' + deleteBookmark.Url + '\n\n' + deleteBookmark.Title)
+  if (deletePrompt) {
+    self.setAjaxAuthentification()
+    $.ajax({
+      url: self.apiUrl + id + '/',
+      type: 'DELETE',
+      success: function (result) {
+        self.refresh()
+      }
+    })
   }
 }
 
@@ -329,4 +347,8 @@ Storage.prototype.setObject = function (key, value) {
 
 Storage.prototype.getObject = function (key) {
   return JSON.parse(this.getItem(key))
+}
+
+triggerLineAction = function (action, id) {
+  $('#' + action).val(id.trim()).trigger('change')
 }
