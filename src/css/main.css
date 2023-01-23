@@ -24,6 +24,7 @@ div.row span a:active {
 }
 
 div.row span.date{
+    cursor: pointer;
     font-size: 0.6em;
     padding-top: 5px;
     padding-right: 15px;

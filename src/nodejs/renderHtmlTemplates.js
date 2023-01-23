@@ -3,7 +3,7 @@ var fs = require('fs')
 require('dotenv').config();
 
 // TODO find those dynamically
-let files = ['add.html', 'index.html'];
+let files = ['index.html'];
 
 files.forEach(function(file) {
   fs.readFile('src/' + file, 'utf8', function (err,data) {

@@ -7,7 +7,6 @@ function Remark (config) {
 Remark.prototype.readConfig = function (config) {
   this.apiUrl = config.apiUrl
   this.indexPath = config.indexPath
-  this.addPath = config.addPath
   this.loginUrl = config.loginUrl
   this.authorizationCookie = config.authorizationCookie
   this.addButtonId = config.addButtonId ? '#' + config.addButtonId : '#add'
@@ -35,6 +34,10 @@ Remark.prototype.listen = function () {
     }, 500)
   })
 
+  $('#edit').on('change', function (event) {
+    self.edit($(this).val().trim())
+  })
+
   // react on changing sort type
   $(this.sortTypeSelectSelector).change(function () {
     self.setSortType(this.value)
@@ -44,10 +47,22 @@ Remark.prototype.listen = function () {
     }, 500)
   })
 
-  // add button click target
   $(self.addButtonId).click(function () {
-    location.href = self.addPath
+    var url = $(self.filterInputId).val()
+    self.addRemark(url)
   })
+}
+
+Remark.prototype.addRemark = function (url) {
+  var self = this
+  self.setAjaxAuthentification()
+  $.post(
+    self.apiUrl + 'remark/',
+    'url=' + url,
+    function (result) {
+      location.href = self.indexPath
+    }
+  )
 }
 
 Remark.prototype.setSortType = function (sortType) {
@@ -128,7 +143,7 @@ Remark.prototype.printBookmark = function (bookmark) {
   var fourDivs = '<div></div><div></div><div></div><div></div>'
   return '<div data-id="' + bookmark.ID + '" class="row item">' +
            '<div class="12 col">' +
-           '<span class="date">' + this.extractDate(bookmark.CreatedAt) + '</span>' +
+           '<span class="date" onclick="edit(\'' + bookmark.ID + '\')">' + this.extractDate(bookmark.CreatedAt) + '</span>' +
            '<span class="time">' + this.extractTime(bookmark.CreatedAt) + '</span>' +
            '<div class="icon remark level' + this.getRemarkVisibility(bookmark.RemarkCount) + '">' + fourDivs + '</div>' +
            '<div class="icon click level' + this.getClickVisibility(bookmark.ClickCount) + '">' + fourDivs + '</div>' +
@@ -141,6 +156,38 @@ Remark.prototype.printBookmark = function (bookmark) {
            '</div>' +
            '</div>' +
            '</div>'
+}
+
+edit = function (id) {
+  $('#edit').val(id).trigger('change')
+}
+
+Remark.prototype.edit = function (id) {
+  var self = this
+
+  var bookmarks = self.bookmarks.Bookmarks
+
+  var editBookmark
+
+  for (var i = 0; i < bookmarks.length; i++) {
+    if (bookmarks[i].ID === Number(id)) {
+      editBookmark = bookmarks[i]
+      break
+    }
+  }
+
+  var newTitle = prompt('change title for\n\n' + editBookmark.Url + '\n', editBookmark.Title)
+
+  if (newTitle) {
+    self.setAjaxAuthentification()
+    $.post(
+      self.apiUrl + id + '/',
+      'title=' + newTitle,
+      function (result) {
+        self.refresh()
+      }
+    )
+  }
 }
 
 Remark.prototype.storeBookmarks = function (bookmarks) {
