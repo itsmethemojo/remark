@@ -1,0 +1,18 @@
+app:
+  nameOverride: remark
+
+  image:
+    repository: ghcr.io/itsmethemojo/remark
+    tag: sha-f0e6479
+
+  env:
+    # -- base url of the remark api [see](https://github.com/itsmethemojo/remark-api/)
+    REMARK_API: /api/v1/bookmark/
+
+    # -- url of login page to redirect to if api calls are not authorized
+    LOGIN_URL: /auth/start/
+
+    # -- see Cookie where javascript can get the authorization information from
+    AUTHORIZATION_COOKIE: Authorization
+
+
