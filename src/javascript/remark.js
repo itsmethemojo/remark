@@ -80,9 +80,9 @@ Remark.prototype.setSortType = function (sortType) {
 }
 
 Remark.prototype.initialize = function () {
-  if (this.sharedRemark) {
-    location.href = this.addPath + '?remark=' + this.sharedRemark
-    return
+  const externalRemark = this.getUrlParameter('remark')
+  if (externalRemark) {
+    this.addRemark(externalRemark)
   }
 
   if (this.bookmarks.length !== 0) {
