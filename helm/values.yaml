@@ -3,7 +3,7 @@ app:
 
   image:
     repository: ghcr.io/itsmethemojo/remark
-    tag: sha-8b307d1
+    tag: sha-fc99bd9
 
   env:
     # -- base url of the remark api [see](https://github.com/itsmethemojo/remark-api/)
