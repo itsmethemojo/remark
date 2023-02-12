@@ -12,7 +12,7 @@ files.forEach(function(file) {
     }
     var resultData = data;
     Object.keys(process.env).forEach(function(key) {
-      resultData = resultData.replace('{{ ' + key + ' }}', process.env[key]);
+      resultData = resultData.replaceAll('{{ ' + key + ' }}', process.env[key]);
     });
     fs.writeFile('dist/' + file, resultData, 'utf8', function (err) {
        if (err) return console.log(err);
