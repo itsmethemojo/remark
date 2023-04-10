@@ -17,7 +17,8 @@ Remark.prototype.readConfig = function (config) {
   this.wto = 0
   this.filter = $(this.filterInputId).val()
   this.bookmarks = localStorage.getObject('bookmarks') || []
-  this.maxCount = this.getUrlParameter('items')
+  const stringMaxCount = this.getUrlParameter('items')
+  this.maxCount = stringMaxCount === null ? -1 : Number(stringMaxCount)
   this.sharedRemark = this.getUrlParameter('remark')
 }
 
@@ -120,8 +121,8 @@ Remark.prototype.printBookmarks = function () {
     if (this.isBookmarkFiltered(bookmarks[i], i === 0 ? { ID: null } : bookmarks[previousId])) {
       continue
     }
-    if (self.maxCount !== null && self.maxCount === bookmarksHtmlCreated) {
-      continue
+    if (self.maxCount === bookmarksHtmlCreated) {
+      break
     }
 
     bookmarksHtmlCreated++
