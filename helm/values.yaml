@@ -3,7 +3,7 @@ app:
 
   image:
     repository: ghcr.io/itsmethemojo/remark
-    # tag: AppVersion from Chart will be used
+    tag: sha-eddb51b
 
   env:
     # -- base url of the remark api [see](https://github.com/itsmethemojo/remark-api/)

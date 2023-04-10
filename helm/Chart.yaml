@@ -3,7 +3,6 @@ name: remark
 description: A Helm chart to run remark frontend in Kubernetes
 type: application
 version: 0.5.0
-appVersion: sha-eddb51b
 icon: https://itsmethemojo.github.io/helm-charts/icon.png
 sources:
   - https://github.com/itsmethemojo/remark
