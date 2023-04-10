@@ -3,7 +3,7 @@ app:
 
   image:
     repository: ghcr.io/itsmethemojo/remark
-    tag: sha-faa9885
+    # tag: AppVersion from Chart will be used
 
   env:
     # -- base url of the remark api [see](https://github.com/itsmethemojo/remark-api/)
