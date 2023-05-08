@@ -20,6 +20,7 @@ Remark.prototype.readConfig = function (config) {
   const stringMaxCount = this.getUrlParameter('items')
   this.maxCount = stringMaxCount === null ? -1 : Number(stringMaxCount)
   this.sharedRemark = this.getUrlParameter('remark')
+  this.pagesize = Number(this.getUrlParameter('pagesize'))
 }
 
 Remark.prototype.listen = function () {
@@ -96,7 +97,7 @@ Remark.prototype.initialize = function () {
 Remark.prototype.refresh = function () {
   console.log('refreshing')
   const self = this
-  const jsonUrl = self.apiUrl
+  const jsonUrl = self.apiUrl + '?pagesize=' + self.pagesize
   self.setAjaxAuthentification()
   $.getJSON(jsonUrl, function (bookmarks) {
     self.storeBookmarks(bookmarks)

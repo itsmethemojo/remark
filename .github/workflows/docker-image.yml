@@ -2,8 +2,8 @@ name: docker-image
 
 on:
   push:
-    branches:
-      - 'master'
+#    branches:
+#      - 'master'
 
 jobs:
   docker:
