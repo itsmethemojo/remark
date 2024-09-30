@@ -1,4 +1,4 @@
-FROM node:19.4.0 as build
+FROM node:22.9.0 as build
 
 ARG GIT_REF=latest
 
