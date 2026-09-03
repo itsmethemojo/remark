@@ -15,6 +15,6 @@ COPY src /app/src
 
 RUN cd /app && npm run build
 
-FROM nginx:1.23.3
+FROM nginx:1.31.5
 
 COPY --from=build /app/dist /usr/share/nginx/html/
